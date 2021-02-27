@@ -14,7 +14,7 @@ public class Film {
 			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures) {
 		super();
 		this.id = id;
-		this.title = title;
+		this.title = convertToTitle(title);
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.languageId = languageId;
@@ -31,7 +31,7 @@ public class Film {
 			List<Actor> castList) {
 		super();
 		this.id = id;
-		this.title = title;
+		this.title = convertToTitle(title);
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.languageId = languageId;
@@ -239,8 +239,9 @@ public class Film {
 	// title, year, rating, and description
 	public String userToString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Title: ").append(convertToTitle(title)).append("\n").append(convertToTitle(title)).append(", was released in ").append(releaseYear)
-		.append(" with a rating of ").append(rating).append(".").append("\nDescription:\n	").append(description);
+		builder.append("Title: ").append(title).append("\nPlot:\n     ").append(description).append("\nFilm Facts:\n     ")
+				.append(title).append(", was released in ").append(releaseYear).append(" with a rating of ")
+				.append(rating).append(".");
 		return builder.toString();
 	}
 

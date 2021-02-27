@@ -52,15 +52,26 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public List<Film> findFilmsByText(String searchText) {
 		List<Film> filmResults = new ArrayList<>();
+		String[] keyWords = searchText.split(" ");
 		
 		String sqlQuery = "SELECT * FROM film WHERE title LIKE ? OR description LIKE ? ";
+		if (keyWords.length > 1) {
+			for (int i = 0; i < (keyWords.length-1); i++) {
+				sqlQuery += "OR title LIKE ? OR description LIKE ?";
+			}
+		}
 		
 		try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
 				PreparedStatement stmt = conn.prepareStatement(sqlQuery);) {
-			stmt.setString(1, ("%"+searchText+"%"));
-			stmt.setString(2, ("%"+searchText+"%"));
-			
-			System.out.println(stmt);
+			int bindPosition = 1;
+			for (String searchWord : keyWords) {
+				stmt.setString(bindPosition, ("%"+searchWord+"%"));
+				bindPosition++;
+				stmt.setString(bindPosition, ("%"+searchWord+"%"));
+				bindPosition++;
+			}			
+//			To Check Compiled Statement
+//			System.out.println(stmt);
 			try (ResultSet fR = stmt.executeQuery();) {
 				while (fR.next()) {
 					Film film = new Film(fR.getInt("id"), fR.getString("title"), fR.getString("description"),

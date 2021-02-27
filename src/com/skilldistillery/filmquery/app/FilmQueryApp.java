@@ -12,7 +12,7 @@ import com.skilldistillery.filmquery.entities.Film;
 
 public class FilmQueryApp {
 
-	DatabaseAccessor db = new DatabaseAccessorObject();
+	private DatabaseAccessor db = new DatabaseAccessorObject();
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
@@ -21,9 +21,8 @@ public class FilmQueryApp {
 	}
 
 	private void test() {
-		db.findFilmsByText("cat");
 
-		List<Film> films = db.findFilmsByText("Cat");
+		List<Film> films = db.findFilmsByText("Deep Silver");
 		for (Film film : films) {
 			System.out.println(film.userToString());
 			System.out.println();
@@ -42,26 +41,23 @@ public class FilmQueryApp {
 
 	private void startUserInterface(Scanner input) {
 		boolean runningInterface = true;
-		start:
-		while (runningInterface) {
+		start: while (runningInterface) {
 
 			welcome();
 			menu();
 			switch (chooseSearchType(input)) {
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					System.out.println("Thanks for browsing, hope to see you again soon!");
-					break start;
+			case 1:
+				seachFilmById(input);
+				break;
+			case 2:
+				seachFilmByText(input);
+				break;
+			case 3:
+				System.out.println("Thanks for browsing, hope to see you again soon!");
+				break start;
 			}
-			
+
 		}
-	}
-	
-	private void seachById(Scanner input) {
-		
 	}
 
 	private void welcome() {
@@ -70,10 +66,61 @@ public class FilmQueryApp {
 
 	}
 
+	private String getUserString(Scanner input) {
+		boolean gettingString = true;
+		System.out.println("Enter Text: ");
+		String userStr = input.nextLine();
+		return userStr;
+	}
+
+	private boolean ensureYesOrNo(Scanner input) {
+		boolean gettingBool = true;
+		boolean searchAgain = false;
+		while (gettingBool) {
+			String userBool = getUserString(input).toLowerCase().trim();
+			if (userBool.equals("true") || userBool.equals("yes") || userBool.equals("y") || userBool.equals("yeah")
+					|| userBool.equals("please") || userBool.equals("oaky")|| userBool.equals("sí")) {
+				searchAgain = true;
+				gettingBool = false;
+
+			} else if (userBool.equals("false") || userBool.equals("no") || userBool.equals("n") || userBool.equals("nope")
+					|| userBool.equals("stop") || userBool.equals("exit")|| userBool.equals("end")) {
+				searchAgain = false;
+				gettingBool = false;
+
+			} else {
+				System.out.println("Input not recognized, try entering: Yes or No.");
+
+			}
+
+		}
+		return searchAgain;
+	}
+
+	private int getUserInt(Scanner input) {
+		int userSeachSelection = 0;
+		System.out.println("Enter Number: ");
+		while (userSeachSelection == 0) {
+			try {
+				userSeachSelection = input.nextInt();
+				input.nextLine();
+			} catch (InputMismatchException e) {
+				input.nextLine();
+				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3");
+				continue;
+			}
+			if (userSeachSelection == 0) {
+				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3");
+			}
+
+		}
+		return userSeachSelection;
+	}
+
 	private int chooseSearchType(Scanner input) {
 		boolean selectingSearch = true;
 		int searchOption = 0;
-		
+
 		while (selectingSearch) {
 			searchOption = getUserInt(input);
 			if (0 < searchOption && searchOption <= 3) {
@@ -86,23 +133,64 @@ public class FilmQueryApp {
 		return searchOption;
 	}
 
-	private int getUserInt(Scanner input) {
-		int userSeachSelection = 0;
-		System.out.println("Enter Number: ");
-		while (userSeachSelection == 0) {
-			try {
-				userSeachSelection = input.nextInt();
-			} catch (InputMismatchException e) {
-				input.nextLine();
-				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3");
-				continue;
+	private int getUserFilmId(Scanner input) {
+		boolean gettingFilmId = true;
+		int searchID = 0;
+
+		while (gettingFilmId) {
+			searchID = getUserInt(input);
+			if (0 < searchID) {
+				break;
+			} else {
+				System.out.println("Apologies, but only whole numbers greater than zero are allowed. E.g. 1, 16, or 42");
 			}
-			if(userSeachSelection == 0) {
-				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3");
+		}
+		return searchID;
+	}
+
+	private void seachFilmById(Scanner input) {
+		boolean seachingById = true;
+		while (seachingById) {
+			System.out.println("Please input a Film Id Number");
+			int filmId = getUserFilmId(input);
+			Film foundFilm = db.findFilmById(filmId);
+
+			if (foundFilm == null) {
+				System.out.println("No Film was found with that Id Number.");
+			} else {
+				System.out.println();
+				System.out.println(foundFilm.userToString());
+				System.out.println();
 			}
+			System.out.println("Film Id searched: "+filmId);
+			System.out.println("Search again by Id? (yes / no)");
+			seachingById = ensureYesOrNo(input);
 
 		}
-		return userSeachSelection;
+
+	}
+	private void seachFilmByText(Scanner input) {
+		boolean seachingByText = true;
+		while (seachingByText) {
+			System.out.println("Please input keywords you would like to search for.");
+			System.out.println("(Hint: avoid words like \"The\" or \"A\" as the search will return Films using those common words)");
+			String userTextSearch = getUserString(input);
+			List<Film> foundFilms = db.findFilmsByText(userTextSearch);
+			
+			if (foundFilms == null || foundFilms.size() == 0) {
+				System.out.println("No films were found matching those key words.");
+			} else {
+				for (Film film : foundFilms) {
+					System.out.println(film.userToString() + "\n");
+				}
+			}
+			
+			System.out.println("Keywords searched: " + userTextSearch + "Results Found: " + foundFilms.size());
+			System.out.println("Search again by Text? (yes / no)");
+			seachingByText = ensureYesOrNo(input);
+			
+		}
+		
 	}
 
 	private void menu() {
