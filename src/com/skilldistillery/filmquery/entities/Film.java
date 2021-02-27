@@ -1,6 +1,8 @@
 package com.skilldistillery.filmquery.entities;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Film {
 
@@ -23,7 +25,6 @@ public class Film {
 		this.rating = rating;
 		this.specialFeatures = specialFeatures;
 	}
-	
 
 	public Film(int id, String title, String description, Integer releaseYear, int languageId, int rentalDuration,
 			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures,
@@ -42,7 +43,6 @@ public class Film {
 		this.specialFeatures = specialFeatures;
 		this.castList = castList;
 	}
-
 
 	private int id;
 	private String title;
@@ -234,6 +234,26 @@ public class Film {
 				.append(replacementCost).append(", rating=").append(rating).append(", specialFeatures=")
 				.append(specialFeatures).append(", castList=").append(castList).append("]");
 		return builder.toString();
+	}
+
+	// title, year, rating, and description
+	public String userToString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Title: ").append(convertToTitle(title)).append("\n").append(convertToTitle(title)).append(", was released in ").append(releaseYear)
+		.append(" with a rating of ").append(rating).append(".").append("\nDescription:\n	").append(description);
+		return builder.toString();
+	}
+
+	// Use of a stream. Arrays.stream().map(a non-interfering, stateless
+	// function).collect(Collectors.joining(" "));
+	public static String convertToTitle(String text) {
+		if (text == null || text.isEmpty()) {
+			return text;
+		}
+
+		return Arrays.stream(text.split(" ")).map(
+				word -> word.isEmpty() ? word : Character.toTitleCase(word.charAt(0)) + word.substring(1).toLowerCase())
+				.collect(Collectors.joining(" "));
 	}
 
 }

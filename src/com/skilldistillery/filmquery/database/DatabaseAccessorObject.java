@@ -49,6 +49,34 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return film;
 	}
+	@Override
+	public List<Film> findFilmsByText(String searchText) {
+		List<Film> filmResults = new ArrayList<>();
+		
+		String sqlQuery = "SELECT * FROM film WHERE title LIKE ? OR description LIKE ? ";
+		
+		try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+				PreparedStatement stmt = conn.prepareStatement(sqlQuery);) {
+			stmt.setString(1, ("%"+searchText+"%"));
+			stmt.setString(2, ("%"+searchText+"%"));
+			
+			System.out.println(stmt);
+			try (ResultSet fR = stmt.executeQuery();) {
+				while (fR.next()) {
+					Film film = new Film(fR.getInt("id"), fR.getString("title"), fR.getString("description"),
+							fR.getInt("release_year"), fR.getInt("language_id"), fR.getInt("rental_duration"),
+							fR.getDouble("rental_rate"), fR.getInt("length"), fR.getDouble("replacement_cost"),
+							fR.getString("rating"), fR.getString("special_features"), findActorsByFilmId(fR.getInt("id")));
+					filmResults.add(film);
+					
+				}
+			}
+			
+		} catch (SQLException e) {
+			System.err.println(e);
+		}
+		return filmResults;
+	}
 
 	@Override
 	public Actor findActorById(int actorId) {
