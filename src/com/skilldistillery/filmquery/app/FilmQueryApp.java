@@ -99,18 +99,18 @@ public class FilmQueryApp {
 
 	private int getUserInt(Scanner input) {
 		int userSeachSelection = 0;
-		System.out.println("Enter Number: ");
 		while (userSeachSelection == 0) {
 			try {
+				System.out.println("Enter Number: ");
 				userSeachSelection = input.nextInt();
 				input.nextLine();
 			} catch (InputMismatchException e) {
 				input.nextLine();
-				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3");
+				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3\n");
 				continue;
 			}
 			if (userSeachSelection == 0) {
-				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3");
+				System.out.println("I'm sorry, input must be a whole number that is not zero. E.g 1, 2, or 3\n");
 			}
 
 		}
@@ -151,7 +151,7 @@ public class FilmQueryApp {
 	private void seachFilmById(Scanner input) {
 		boolean seachingById = true;
 		while (seachingById) {
-			System.out.println("Please input a Film Id Number");
+			System.out.println("\nPlease input a Film Id Number");
 			int filmId = getUserFilmId(input);
 			Film foundFilm = db.findFilmById(filmId);
 
@@ -163,6 +163,7 @@ public class FilmQueryApp {
 				System.out.println();
 			}
 			System.out.println("Film Id searched: "+filmId);
+			System.out.println();
 			System.out.println("Search again by Id? (yes / no)");
 			seachingById = ensureYesOrNo(input);
 
@@ -172,7 +173,7 @@ public class FilmQueryApp {
 	private void seachFilmByText(Scanner input) {
 		boolean seachingByText = true;
 		while (seachingByText) {
-			System.out.println("Please input keywords you would like to search for.");
+			System.out.println("\nPlease input keywords you would like to search for.");
 			System.out.println("(Hint: avoid words like \"The\" or \"A\" as the search will return Films using those common words)");
 			String userTextSearch = getUserString(input);
 			List<Film> foundFilms = db.findFilmsByText(userTextSearch);
@@ -185,7 +186,8 @@ public class FilmQueryApp {
 				}
 			}
 			
-			System.out.println("Keywords searched: " + userTextSearch + "Results Found: " + foundFilms.size());
+			System.out.println("Keywords searched: " + userTextSearch + ". Results Found: " + foundFilms.size());
+			System.out.println();
 			System.out.println("Search again by Text? (yes / no)");
 			seachingByText = ensureYesOrNo(input);
 			
