@@ -1,6 +1,6 @@
 package com.skilldistillery.filmquery.entities;
 
-public class Actor {
+public class Actor implements Comparable<Actor>{
 
 	public Actor() {
 		super();
@@ -39,6 +39,10 @@ public class Actor {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	public String getFullName() {
+		
+		return (lastName + " " + lastName);
 	}
 
 	@Override
@@ -81,6 +85,19 @@ public class Actor {
 		builder.append("Actor [id=").append(id).append(", firstName=").append(firstName).append(", lastName=")
 				.append(lastName).append("]");
 		return builder.toString();
+	}
+	
+	public String userToString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(", firstName=").append(firstName).append(", lastName=")
+		.append(lastName).append("]");
+		return builder.toString();
+	}
+
+	@Override
+	public int compareTo(Actor o) {
+		int lastCmp = lastName.compareTo(o.lastName);
+		return (lastCmp != 0 ? lastCmp : firstName.compareTo(o.firstName));
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.skilldistillery.filmquery.entities;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,14 +11,14 @@ public class Film {
 		super();
 	}
 
-	public Film(int id, String title, String description, Integer releaseYear, int languageId, int rentalDuration,
+	public Film(int id, String title, String description, Integer releaseYear, String language, int rentalDuration,
 			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures) {
 		super();
 		this.id = id;
 		this.title = convertToTitle(title);
 		this.description = description;
 		this.releaseYear = releaseYear;
-		this.languageId = languageId;
+		this.language = language;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
 		this.length = length;
@@ -26,7 +27,7 @@ public class Film {
 		this.specialFeatures = specialFeatures;
 	}
 
-	public Film(int id, String title, String description, Integer releaseYear, int languageId, int rentalDuration,
+	public Film(int id, String title, String description, Integer releaseYear, String language, int rentalDuration,
 			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures,
 			List<Actor> castList) {
 		super();
@@ -34,7 +35,7 @@ public class Film {
 		this.title = convertToTitle(title);
 		this.description = description;
 		this.releaseYear = releaseYear;
-		this.languageId = languageId;
+		this.language = language;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
 		this.length = length;
@@ -48,7 +49,7 @@ public class Film {
 	private String title;
 	private String description;
 	private Integer releaseYear;
-	private int languageId;
+	private String language;
 	private int rentalDuration;
 	private double rentalRate;
 	private Integer length;
@@ -89,12 +90,12 @@ public class Film {
 		this.releaseYear = year;
 	}
 
-	public int getLanguageId() {
-		return languageId;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setLanguageId(int languageId) {
-		this.languageId = languageId;
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public int getRentalDuration() {
@@ -145,6 +146,8 @@ public class Film {
 		this.specialFeatures = specialFeatures;
 	}
 
+	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -152,7 +155,7 @@ public class Film {
 		result = prime * result + ((castList == null) ? 0 : castList.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
-		result = prime * result + languageId;
+		result = prime * result + ((language == null) ? 0 : language.hashCode());
 		result = prime * result + ((length == null) ? 0 : length.hashCode());
 		result = prime * result + ((rating == null) ? 0 : rating.hashCode());
 		result = prime * result + ((releaseYear == null) ? 0 : releaseYear.hashCode());
@@ -188,7 +191,10 @@ public class Film {
 			return false;
 		if (id != other.id)
 			return false;
-		if (languageId != other.languageId)
+		if (language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!language.equals(other.language))
 			return false;
 		if (length == null) {
 			if (other.length != null)
@@ -229,7 +235,7 @@ public class Film {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Film [id=").append(id).append(", title=").append(title).append(", description=")
 				.append(description).append(", releaseYear=").append(releaseYear).append(", languageId=")
-				.append(languageId).append(", rentalDuration=").append(rentalDuration).append(", rentalRate=")
+				.append(language).append(", rentalDuration=").append(rentalDuration).append(", rentalRate=")
 				.append(rentalRate).append(", length=").append(length).append(", replacementCost=")
 				.append(replacementCost).append(", rating=").append(rating).append(", specialFeatures=")
 				.append(specialFeatures).append(", castList=").append(castList).append("]");
@@ -241,7 +247,11 @@ public class Film {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Title: ").append(title).append("\nPlot:\n     ").append(description).append("\nFilm Facts:\n     ")
 				.append(title).append(", was released in ").append(releaseYear).append(" with a rating of ")
-				.append(rating).append(".");
+				.append(rating).append(". This film's language is: ").append(language).append("\n").append(title).append("'s Cast List: \n");
+		Collections.sort(castList);
+		for (Actor actor : castList) {
+			builder.append("	").append(actor.getFullName()).append("\n");
+		}
 		return builder.toString();
 	}
 

@@ -24,11 +24,11 @@ public class FilmQueryApp {
 
 		List<Film> films = db.findFilmsByText("Deep Silver");
 		for (Film film : films) {
-			System.out.println(film.userToString());
+			System.out.println(film.getLanguage());
 			System.out.println();
 		}
 		System.out.println(films.size());
-
+//		System.out.println(db.findActorById(23));
 	}
 
 	private void launch() {
