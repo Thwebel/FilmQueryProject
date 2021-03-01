@@ -42,7 +42,7 @@ public class Actor implements Comparable<Actor>{
 	}
 	public String getFullName() {
 		
-		return (lastName + " " + lastName);
+		return (firstName + " " + lastName);
 	}
 
 	@Override
