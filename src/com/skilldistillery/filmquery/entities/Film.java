@@ -44,6 +44,25 @@ public class Film {
 		this.specialFeatures = specialFeatures;
 		this.castList = castList;
 	}
+	
+	public Film(int id, String title, String description, Integer releaseYear, String language, int rentalDuration,
+			double rentalRate, Integer length, double replacementCost, String rating, String specialFeatures,
+			String genre, List<Actor> castList) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.releaseYear = releaseYear;
+		this.language = language;
+		this.rentalDuration = rentalDuration;
+		this.rentalRate = rentalRate;
+		this.length = length;
+		this.replacementCost = replacementCost;
+		this.rating = rating;
+		this.specialFeatures = specialFeatures;
+		this.genre = genre;
+		this.castList = castList;
+	}
 
 	private int id;
 	private String title;
@@ -56,6 +75,7 @@ public class Film {
 	private double replacementCost;
 	private String rating;
 	private String specialFeatures;
+	private String genre;
 	private List<Actor> castList;
 
 	public int getId() {
@@ -146,7 +166,21 @@ public class Film {
 		this.specialFeatures = specialFeatures;
 	}
 
-	
+	public Integer getReleaseYear() {
+		return releaseYear;
+	}
+
+	public void setReleaseYear(Integer releaseYear) {
+		this.releaseYear = releaseYear;
+	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
 
 	@Override
 	public int hashCode() {

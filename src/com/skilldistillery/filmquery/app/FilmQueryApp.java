@@ -16,19 +16,19 @@ public class FilmQueryApp {
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
-//    app.test();
+//    	app.test();
 		app.launch();
 	}
 
 	private void test() {
 
-		List<Film> films = db.findFilmsByText("Deep Silver");
-		for (Film film : films) {
-			System.out.println(film.getLanguage());
-			System.out.println();
-		}
-		System.out.println(films.size());
-//		System.out.println(db.findActorById(23));
+//		List<Film> films = db.findFilmsByText("Deep Silver");
+//		for (Film film : films) {
+//			System.out.println(film.getGenre());
+//			System.out.println();
+//		}
+//		System.out.println(films.size());
+//		System.out.println(db.findFilmById(23).getGenre());
 	}
 
 	private void launch() {

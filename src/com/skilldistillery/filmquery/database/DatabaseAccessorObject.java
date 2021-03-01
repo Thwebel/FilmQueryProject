@@ -29,8 +29,11 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public Film findFilmById(int filmId) {
 		Film film = null;
-		String sqlQuery = "SELECT * FROM film JOIN  language ON film.language_id = language.id WHERE film.id = ?";
-
+		String sqlQuery = "SELECT * FROM film "
+				+ "JOIN language ON film.language_id = language.id "
+				+ "JOIN film_category ON film.id = film_category.film_id "
+				+ "JOIN category ON film_category.category_id = category.id "
+				+ "WHERE film.id = ? ";
 		try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
 				PreparedStatement stmt = conn.prepareStatement(sqlQuery);) {
 			stmt.setInt(1, filmId);
@@ -39,7 +42,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 					film = new Film(fR.getInt("id"), fR.getString("title"), fR.getString("description"),
 							fR.getInt("release_year"), fR.getString("language.name"), fR.getInt("rental_duration"),
 							fR.getDouble("rental_rate"), fR.getInt("length"), fR.getDouble("replacement_cost"),
-							fR.getString("rating"), fR.getString("special_features"), findActorsByFilmId(filmId));
+							fR.getString("rating"), fR.getString("special_features"), fR.getString("category.name"), findActorsByFilmId(filmId));
 
 				}
 			}
@@ -49,27 +52,32 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return film;
 	}
+
 	@Override
 	public List<Film> findFilmsByText(String searchText) {
 		List<Film> filmResults = new ArrayList<>();
 		String[] keyWords = searchText.split(" ");
-		
-		String sqlQuery = "SELECT * FROM film JOIN  language ON film.language_id = language.id WHERE title LIKE ? OR description LIKE ? ";
+
+		String sqlQuery = "SELECT * FROM film "
+				+ "JOIN language ON film.language_id = language.id "
+				+ "JOIN film_category ON film.id = film_category.film_id "
+				+ "JOIN category ON film_category.category_id = category.id "
+				+ "WHERE title LIKE ? OR description LIKE ? ";
 		if (keyWords.length > 1) {
-			for (int i = 0; i < (keyWords.length-1); i++) {
+			for (int i = 0; i < (keyWords.length - 1); i++) {
 				sqlQuery += "OR title LIKE ? OR description LIKE ?";
 			}
 		}
-		
+
 		try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
 				PreparedStatement stmt = conn.prepareStatement(sqlQuery);) {
 			int bindPosition = 1;
 			for (String searchWord : keyWords) {
-				stmt.setString(bindPosition, ("%"+searchWord+"%"));
+				stmt.setString(bindPosition, ("%" + searchWord + "%"));
 				bindPosition++;
-				stmt.setString(bindPosition, ("%"+searchWord+"%"));
+				stmt.setString(bindPosition, ("%" + searchWord + "%"));
 				bindPosition++;
-			}			
+			}
 //			To Check Compiled Statement
 //			System.out.println(stmt);
 			try (ResultSet fR = stmt.executeQuery();) {
@@ -77,12 +85,13 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 					Film film = new Film(fR.getInt("id"), fR.getString("title"), fR.getString("description"),
 							fR.getInt("release_year"), fR.getString("language.name"), fR.getInt("rental_duration"),
 							fR.getDouble("rental_rate"), fR.getInt("length"), fR.getDouble("replacement_cost"),
-							fR.getString("rating"), fR.getString("special_features"), findActorsByFilmId(fR.getInt("id")));
+							fR.getString("rating"), fR.getString("special_features"), fR.getString("category.name"),
+							findActorsByFilmId(fR.getInt("id")));
 					filmResults.add(film);
-					
+
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			System.err.println(e);
 		}
@@ -112,12 +121,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public List<Actor> findActorsByFilmId(int filmId) {
 		List<Actor> castList = new ArrayList<>();
-		String sqlQuery = "SELECT actor.id, actor.first_name, actor.last_name "
-				+ "FROM actor"
-				+ "  JOIN film_actor"
-				+ "    ON actor.id = film_actor.actor_id"
-				+ "  JOIN film"
-				+ "    ON film_actor.film_id = film.id"
+		String sqlQuery = "SELECT actor.id, actor.first_name, actor.last_name " + "FROM actor" + "  JOIN film_actor"
+				+ "    ON actor.id = film_actor.actor_id" + "  JOIN film" + "    ON film_actor.film_id = film.id"
 				+ "    WHERE film.id = ?";
 		try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
 				PreparedStatement stmt = conn.prepareStatement(sqlQuery);) {
