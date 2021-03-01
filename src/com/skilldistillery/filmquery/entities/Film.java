@@ -50,7 +50,7 @@ public class Film {
 			String genre, List<Actor> castList) {
 		super();
 		this.id = id;
-		this.title = title;
+		this.title = convertToTitle(title);
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.language = language;
